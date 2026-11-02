@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0b0c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KORA">
+<title>KORA — Knowledge Oriented Response Assistance</title>
+<link rel="icon" href="kora_logo.svg" type="image/svg+xml">
+<link rel="alternate icon" href="kora_logo.ico">
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){try{var u=JSON.parse(localStorage.getItem("kora_ui")||"{}"),r=document.documentElement;
+if(u.theme)r.dataset.theme=u.theme;if(u.accent){r.style.setProperty("--ac",u.accent);r.style.setProperty("--ac2","color-mix(in srgb,"+u.accent+" 55%,#fff)")}
+if(u.calm)r.dataset.calm="1"}catch(e){}})();
+</script>
+</head>
+<body class="booting">
+
+<div class="boot" id="boot" role="status">
+  <div class="boot-in">
+    <span class="mark lg"><i></i><i></i><i></i><i></i></span>
+    <h1>KORA</h1>
+    <p id="bootMsg">Opening KORA…</p>
+    <div class="bar-track"><span id="bootBar"></span></div>
+    <button class="btn ghost small" id="bootSkip" hidden>Continue anyway</button>
+  </div>
+</div>
+
+<header class="top pywebview-drag-region" id="topbar">
+  <div class="top-l pywebview-drag-region">
+    <a class="brand" href="#/home" aria-label="KORA home"><span class="mark"><i></i><i></i><i></i><i></i></span><b>KORA</b></a>
+    <div class="grow pywebview-drag-region"></div>
+  </div>
+  <nav class="nav" id="nav" aria-label="Primary"><span class="nav-ind" id="navInd" aria-hidden="true"></span>
+    <button data-view="home">Home</button>
+    <button data-view="chat">Chat</button>
+    <button data-view="documents">Documents</button>
+    <button data-view="index">Index</button>
+    <button data-view="settings">Settings</button>
+  </nav>
+  <div class="top-r pywebview-drag-region">
+    <div class="grow pywebview-drag-region"></div>
+    <button class="avatar" id="profileBtn" title="Settings" aria-label="Open settings">L</button>
+    <div class="wc" id="winCtl" hidden>
+      <button id="wcMin" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 14 14"><path d="M2 7h10"/></svg></button>
+      <button id="wcMax" aria-label="Maximize" title="Maximize"><svg viewBox="0 0 14 14" id="wcMaxIc"><rect x="2.5" y="2.5" width="9" height="9" rx="1"/></svg></button>
+      <button id="wcClose" class="x" aria-label="Close" title="Close"><svg viewBox="0 0 14 14"><path d="M2.5 2.5l9 9M11.5 2.5l-9 9"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="netbar" id="netbar" role="alert" hidden>KORA isn’t responding. Trying to reconnect…</div>
+
+<main id="main">
+
+<!-- ===================================================== HOME -->
+<section class="view" id="v-home">
+  <div class="home">
+    <div class="home-in">
+      <span class="mark xl"><i></i><i></i><i></i><i></i></span>
+      <p class="eyebrow">Knowledge Oriented Response Assistance</p>
+      <h1 id="homeH">Good evening</h1>
+      <p class="sub-h">What would you like to know?</p>
+      <form class="ask" id="askForm" autocomplete="off">
+        <button type="button" class="ibtn" id="homeAttach" aria-label="Upload documents" title="Upload documents"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <input id="askInput" placeholder="Ask about your documents…" aria-label="Ask KORA">
+        <button class="go" type="submit" aria-label="Ask KORA"><svg class="ic" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      </form>
+      <p class="home-foot" id="homeFoot">Runs entirely on this computer</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== CHAT -->
+<section class="view" id="v-chat">
+  <aside class="hpanel" id="histPanel" aria-label="Conversation history">
+    <div class="hp-h"><b>History</b><button class="nc" id="newChat"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New chat</button></div>
+    <input class="field" id="chatFilter" placeholder="Search conversations…" aria-label="Search conversations">
+    <div id="chatList" class="hist"></div>
+  </aside>
+  <div class="chat-main">
+    <div class="chat-head">
+      <h2 id="chatTitle">New conversation</h2>
+      <div class="export">
+        <button id="exportBtn" disabled aria-haspopup="true" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg>Export</button>
+        <div class="menu" id="exportMenu" hidden>
+          <button data-export="pdf"><b>PDF document</b><span>Formatted, with sources</span></button>
+          <button data-export="md"><b>Markdown</b><span>Plain text you can edit</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-scroll" id="chatScroll">
+      <div class="chat-col">
+        <div class="chat-empty" id="chatHero">
+          <span class="mark lg"><i></i><i></i><i></i><i></i></span>
+          <h3>Ask anything</h3>
+          <p class="dim">Questions about your documents come back with sources. Everything else gets a normal answer.</p>
+          <div class="starters" id="starters">
+            <button type="button" data-q="Summarize my documents"><b>Summarize my documents</b><i>Everything indexed</i></button>
+            <button type="button" data-q="List the documents currently in my workspace"><b>What’s in my workspace?</b><i>Files and record counts</i></button>
+            <button type="button" data-q="Create concise notes from my documents"><b>Create concise notes</b><i>Key points, with sources</i></button>
+            <button type="button" data-q="Compare my documents"><b>Compare my documents</b><i>Differences and overlap</i></button>
+          </div>
+        </div>
+        <div id="messages"></div>
+      </div>
+    </div>
+    <div class="composer-wrap">
+      <form class="composer" id="composerForm" autocomplete="off">
+        <div class="comp-row">
+          <textarea id="composerInput" rows="1" placeholder="Message KORA…" aria-label="Message"></textarea>
+          <button class="go send" id="sendBtn" type="submit" aria-label="Send"><svg class="ic" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+        </div>
+      </form>
+      <p class="hint">Enter to send · Shift+Enter for a new line</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== DOCUMENTS -->
+<section class="view" id="v-documents">
+  <div class="wrap">
+    <header class="page-h">
+      <div><h1>Your library</h1><p class="dim" id="docSummary">&nbsp;</p></div>
+      <button class="btn primary" id="docUpload"><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M5 20h14"/></svg>Upload</button>
+    </header>
+    <label class="bigsearch"><svg class="ic" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"/></svg><input id="docSearch" placeholder="Search your documents" aria-label="Search documents" autocomplete="off"></label>
+    <div class="facets" id="facets" role="tablist" aria-label="File types"></div>
+    <div class="dtools">
+      <span class="dim small" id="docShown"></span>
+      <div class="dt-r">
+        <select id="docSort" aria-label="Sort" data-label="Sort" data-right><option value="name">Name</option><option value="records">Most records</option><option value="type">Type</option></select>
+        <div class="seg icons" id="viewSeg"><button data-layout="grid" aria-label="Grid view" title="Grid"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></button><button data-layout="list" aria-label="List view" title="List"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      </div>
+    </div>
+    <div class="dgrid" id="docList"></div>
+    <div class="more-row" id="docFoot" hidden><button class="btn" id="docMore">Show more</button></div>
+  </div>
+</section>
+
+<!-- ===================================================== INDEX -->
+<section class="view" id="v-index">
+  <div class="wrap mid">
+    <header class="page-h"><div><h1>Knowledge base</h1><p class="dim">What KORA can search right now.</p></div><button class="btn primary" id="reindexBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5"/></svg>Rebuild index</button></header>
+    <div class="idxcard">
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 160 160" aria-hidden="true"><circle class="rt" cx="80" cy="80" r="68"/><circle class="ra" id="ringArc" cx="80" cy="80" r="68" transform="rotate(-90 80 80)"/></svg>
+        <div class="rc"><strong id="ringTxt">✓</strong><span class="mono" id="ringSub">Ready</span></div>
+      </div>
+      <div class="idxinfo">
+        <h3 id="idxTitle">Up to date</h3>
+        <p class="dim" id="idxMsg">Every document is searchable.</p>
+        <div class="mini" id="idxMini"></div>
+      </div>
+    </div>
+    <h3 class="sub">Composition</h3>
+    <div class="stack" id="idxStack" role="img" aria-label="Records by file type"></div>
+    <div class="legend" id="idxLegend"></div>
+    <h3 class="sub">Last indexing run</h3>
+    <div class="index-report" id="idxReport"><p class="dim">No indexing report yet.</p></div>
+    <h3 class="sub">Models</h3>
+    <div class="kvr-list" id="idxModels"></div>
+  </div>
+</section>
+
+<!-- ===================================================== SETTINGS -->
+<section class="view" id="v-settings">
+  <div class="wrap">
+    <header class="page-h"><div><h1>Make it yours</h1><p class="dim">Changes save as you make them.</p></div></header>
+    <div class="sgrid">
+
+      <section class="scard">
+        <h2>Profile</h2>
+        <div class="prof"><span class="avatar xl" id="profAvatar">L</span><div><label for="nameInput" class="dim small">Display name</label><input class="field" id="nameInput" maxlength="80" placeholder="Local user"></div></div>
+        <p class="note">Used in your greeting. Stored only in this browser.</p>
+      </section>
+
+      <section class="scard">
+        <h2>Workspace</h2>
+        <button class="act" id="openWs"><span><b>Open workspace folder</b><i>KORA/workspace on this computer</i></span><svg class="ic" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
+        <button class="act" id="sysLogs"><span><b>Open logs folder</b><i>Useful if something isn't working</i></span><svg class="ic" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
+      </section>
+
+      <section class="scard" id="exportCard">
+        <h2>Export</h2>
+        <div class="srow"><div><b>Export folder</b><span id="exportFolder">Your browser asks where to save each file.</span></div><button class="btn small" id="exportFolderBtn" hidden>Change</button></div>
+        <p class="note">Each export opens a Save dialog, so you can still pick any location or file name.</p>
+      </section>
+
+      <section class="scard wide">
+        <h2>Appearance</h2>
+        <div class="themes" id="themes">
+          <button data-theme-pick="dark" style="--a:#0b0b0c;--b:#161618;--t:#f3f3f4"><span class="tp"><i></i><i></i><i></i></span><b>Dark</b></button>
+          <button data-theme-pick="black" style="--a:#000;--b:#0e0e10;--t:#f3f3f4"><span class="tp"><i></i><i></i><i></i></span><b>Black</b></button>
+          <button data-theme-pick="light" style="--a:#f6f6f4;--b:#ffffff;--t:#141416"><span class="tp"><i></i><i></i><i></i></span><b>Light</b></button>
+        </div>
+        <div class="srow"><b>Accent color</b>
+          <div class="swatches" id="swatches">
+            <button data-accent="#8b6cff" style="--sw:#8b6cff" aria-label="Violet"></button><button data-accent="#4c8dff" style="--sw:#4c8dff" aria-label="Blue"></button>
+            <button data-accent="#1fbfa6" style="--sw:#1fbfa6" aria-label="Teal"></button><button data-accent="#3ddc97" style="--sw:#3ddc97" aria-label="Green"></button>
+            <button data-accent="#f2a33a" style="--sw:#f2a33a" aria-label="Amber"></button><button data-accent="#f0567f" style="--sw:#f0567f" aria-label="Rose"></button>
+            <label class="swatch-custom" title="Custom color"><input type="color" id="customAccent" value="#8b6cff" aria-label="Custom accent color"></label>
+          </div></div>
+        <div class="srow"><div><b>Calm mode</b><span>Turns off animations and transitions.</span></div><label class="switch"><input type="checkbox" id="calmToggle" aria-label="Calm mode"><span></span></label></div>
+        <div class="srow"><div><b>Reset appearance</b><span>Back to Dark with the violet accent.</span></div><button class="btn small" id="uiReset">Reset</button></div>
+      </section>
+
+      <section class="scard">
+        <h2>Performance</h2>
+        <div class="seg full" id="profileSeg"><button data-profile="auto">Auto</button><button data-profile="low">Gentle</button><button data-profile="cpu">CPU only</button></div>
+        <p class="note" id="modeHelp">Auto picks the best settings for this computer.</p>
+        <div class="srow"><div><b>Use integrated graphics</b><span>Shared-memory graphics are skipped by default.</span></div><label class="switch"><input type="checkbox" id="sysGpu" aria-label="Use integrated graphics"><span></span></label></div>
+        <div id="sysWarn"></div>
+        <p class="note" id="sysNote">Applies the next time you start KORA.</p>
+      </section>
+
+      <section class="scard">
+        <h2>This computer</h2>
+        <div class="kvr-list" id="sysList"><div class="kvr"><span>Loading…</span></div></div>
+      </section>
+
+      <section class="scard wide about">
+        <span class="mark lg"><i></i><i></i><i></i><i></i></span>
+        <div><h2>About KORA</h2><p class="dim">A local assistant that uses your documents when they're relevant. Your files, index and conversations stay on this computer, and answers built from your documents list the page, sheet or slide they came from.</p></div>
+      </section>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="bulk" id="bulk" hidden><span id="bulkN">0 selected</span><button class="btn small" id="bulkAll">Select all</button><button class="btn small" id="bulkCancel">Cancel</button><button class="btn small danger" id="bulkDel">Remove</button></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="overlay" id="overlay" hidden></div>
+
+<script src="structured-result.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
